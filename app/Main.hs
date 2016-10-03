@@ -1,6 +1,17 @@
+---------------------------------------------------------------------------------------------------
+
 module Main where
 
-import Lib
+import qualified Data.Text.IO as TIO
+
+import Parser
+
+---------------------------------------------------------------------------------------------------
 
 main :: IO ()
-main = someFunc
+main = do
+   content <- TIO.readFile "testSrc/simpleMain.fl"
+   let prg = iParse "testSrc/simpleMain.fl" content
+   print prg
+
+---------------------------------------------------------------------------------------------------
