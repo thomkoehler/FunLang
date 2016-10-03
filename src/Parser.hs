@@ -18,14 +18,21 @@ iParse :: SourceName -> T.Text -> Either ParseError (Program T.Text)
 iParse sourceName input = runIndent sourceName $ runParserT parseProgram () sourceName input
 
 parseProgram :: IParser (Program T.Text)
-parseProgram = do
-   spaces
-   many parseScDefn
+parseProgram = many parseScDefn
 
 parseScDefn :: IParser (ScDefn T.Text)
 parseScDefn = do
-   (name : args) <- many identifier
    spaces
-   return $ ScDefn name [] (EVar "Undefined")
+   name <- identifier
+   args <- many identifier
+   reservedOp "="
+   expr <- parseExpr
+   return $ ScDefn name args expr
+
+parseExpr :: IParser (Expr T.Text)
+parseExpr = do
+   spaces
+   EVar <$> identifier
+   <?> "expr"
 
 ---------------------------------------------------------------------------------------------------
