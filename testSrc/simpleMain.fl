@@ -1,1 +1,10 @@
-main x y = x
+main x y = 1
+
+fun x = 
+   let 
+      a = 1
+      b = 2
+      c = 3
+   in
+      x
+   

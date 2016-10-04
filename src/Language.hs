@@ -18,7 +18,7 @@ data ScDefn a = ScDefn
 
 data Expr a
    = EVar !a
-   | ENum !Int
+   | ENum !Integer
    | ELet [(a, Expr a)] (Expr a)
    deriving(Show)
 
