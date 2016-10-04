@@ -1,8 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 
-{-# LANGUAGE OverloadedStrings #-}
-
-module Parser(iParse) where
+module Parser(Parser.parse) where
 
 import Text.Parsec hiding (State)
 import Text.Parsec.Indent
@@ -14,8 +12,8 @@ import Language
 import Lexer
 
 
-iParse :: SourceName -> T.Text -> Either ParseError (Program T.Text)
-iParse sourceName input = runIndent sourceName $ runParserT parseProgram () sourceName input
+parse :: SourceName -> T.Text -> Either ParseError (Program T.Text)
+parse sourceName input = runIndent sourceName $ runParserT parseProgram () sourceName input
 
 
 parseProgram :: IParser (Program T.Text)
@@ -46,7 +44,8 @@ parseExpr = do
 
 parseLetExpr :: IParser (Expr T.Text)
 parseLetExpr = do
-   as <- withBlock' (reserved "let") parseAlias
+   reserved "let"
+   as <- block parseAlias
    reserved "in"
    expr <- parseExpr
    return $ ELet as expr

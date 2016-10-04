@@ -10,8 +10,9 @@ import Parser
 
 main :: IO ()
 main = do
-   content <- TIO.readFile "testSrc/simpleMain.fl"
-   let prg = iParse "testSrc/simpleMain.fl" content
+   let file = "testSrc/nestedLet.fl"
+   content <- TIO.readFile file
+   let prg = parse file content
    print prg
 
 ---------------------------------------------------------------------------------------------------

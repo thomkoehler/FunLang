@@ -1,0 +1,15 @@
+
+main = 1
+
+foo =
+   let
+      a =
+         let
+            x = 2
+            y = 3
+         in
+            x
+            
+      b = 4
+   in
+      a

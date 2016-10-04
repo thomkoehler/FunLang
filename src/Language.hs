@@ -14,12 +14,12 @@ data ScDefn a = ScDefn
       scArgs :: ![a],
       scExpr :: !(Expr a)
    }
-   deriving(Show)
+   deriving(Show, Eq)
 
 data Expr a
    = EVar !a
    | ENum !Integer
    | ELet [(a, Expr a)] (Expr a)
-   deriving(Show)
+   deriving(Show, Eq)
 
 ---------------------------------------------------------------------------------------------------
