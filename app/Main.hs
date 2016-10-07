@@ -4,7 +4,7 @@ module Main where
 
 import qualified Data.Text.IO as TIO
 
-import Parser
+import Compiler.Parser
 
 ---------------------------------------------------------------------------------------------------
 
