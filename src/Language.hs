@@ -22,6 +22,7 @@ data Expr
    = EVar !Text
    | ENum !Integer
    | ELet [(Text, Expr)] Expr
+   | EAp Expr Expr
    deriving(Show, Eq)
 
 ---------------------------------------------------------------------------------------------------

@@ -3,10 +3,8 @@
 module Main where
 
 import qualified Data.Text.IO as TIO
-import Data.Text
 
 import Compiler
-import Language
 
 ---------------------------------------------------------------------------------------------------
 

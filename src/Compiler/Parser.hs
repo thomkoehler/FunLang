@@ -1,9 +1,13 @@
 ---------------------------------------------------------------------------------------------------
 
+{-# LANGUAGE OverloadedStrings #-}
+
 module Compiler.Parser(Compiler.Parser.parse) where
 
 import Text.Parsec hiding (State)
 import Text.Parsec.Indent
+import Text.Parsec.Expr
+import Text.Parsec.Language
 import Control.Monad.State
 import qualified Data.Text as T
 
@@ -58,6 +62,29 @@ parseAlias = do
    reservedOp "="
    expr <- parseExpr
    return (alias, expr)
+
+
+term :: IParser Expr
+term = choice
+   [
+
+   ]
+
+
+table :: [[Operator T.Text () (State SourcePos) Expr]]
+table =
+   [
+      [Infix (infixOp "*") AssocLeft, Infix (infixOp "/") AssocLeft],
+      [Infix (infixOp "+") AssocLeft, Infix (infixOp "-") AssocLeft]
+   ]
+
+
+infixOp :: String -> IParser (Expr -> Expr -> Expr)
+infixOp name = do
+   reservedOp name
+   return infixExpr
+   where
+      infixExpr e0 = EAp (EAp (EVar (T.pack name)) e0)
 
 
 ---------------------------------------------------------------------------------------------------
