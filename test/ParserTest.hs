@@ -11,7 +11,7 @@ import Test.Framework
 import Text.RawString.QQ
 import qualified Data.Text as T
 
-import Parser
+import Compiler
 import Language
 
 
@@ -28,7 +28,7 @@ main =
       x
 |]
 
-exprSimpleLet :: Program T.Text
+exprSimpleLet :: Program
 exprSimpleLet = 
    [
       ScDefn "main" [] 
@@ -51,7 +51,7 @@ main =
       x
 |]
 
-exprMultiLet :: Program T.Text
+exprMultiLet :: Program
 exprMultiLet = 
    [
       ScDefn "main" [] 

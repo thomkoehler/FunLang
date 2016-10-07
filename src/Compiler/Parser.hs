@@ -13,15 +13,15 @@ import Compiler.Types
 import Compiler.Lexer
 
 
-parse :: SourceName -> T.Text -> Either ParseError (Program T.Text)
+parse :: SourceName -> T.Text -> Either ParseError Program
 parse sourceName input = runIndent sourceName $ runParserT parseProgram () sourceName input
 
 
-parseProgram :: IParser (Program T.Text)
+parseProgram :: IParser Program
 parseProgram = many parseScDefn
 
 
-parseScDefn :: IParser (ScDefn T.Text)
+parseScDefn :: IParser ScDefn
 parseScDefn = do
    spaces
    name <- identifier
@@ -31,7 +31,7 @@ parseScDefn = do
    return $ ScDefn name args expr
 
 
-parseExpr :: IParser (Expr T.Text)
+parseExpr :: IParser Expr
 parseExpr = do
    spaces
    choice
@@ -43,7 +43,7 @@ parseExpr = do
    <?> "expr"
 
 
-parseLetExpr :: IParser (Expr T.Text)
+parseLetExpr :: IParser Expr
 parseLetExpr = do
    reserved "let"
    as <- block parseAlias
@@ -52,7 +52,7 @@ parseLetExpr = do
    return $ ELet as expr
 
 
-parseAlias :: IParser (T.Text, Expr T.Text)
+parseAlias :: IParser (T.Text, Expr)
 parseAlias = do
    alias <- identifier
    reservedOp "="

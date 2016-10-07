@@ -6,20 +6,22 @@ module Language where
 import Data.Text
 
 
-type Program a = [ScDefn a]
+type Program = [ScDefn]
 
-data ScDefn a = ScDefn
+
+data ScDefn = ScDefn
    {
-      scName :: !a,
-      scArgs :: ![a],
-      scExpr :: !(Expr a)
+      scName :: !Text,
+      scArgs :: ![Text],
+      scExpr :: !Expr
    }
    deriving(Show, Eq)
 
-data Expr a
-   = EVar !a
+
+data Expr 
+   = EVar !Text
    | ENum !Integer
-   | ELet [(a, Expr a)] (Expr a)
+   | ELet [(Text, Expr)] Expr
    deriving(Show, Eq)
 
 ---------------------------------------------------------------------------------------------------
