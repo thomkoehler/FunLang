@@ -1,24 +1,43 @@
 
 module TIM.Machine where
 
-import TIM.Types
 import qualified TIM.Heap as Heap
-
-data Closure = Closure
-
-data Frame = Frame
-   {
-     closures :: [Closure] 
-   }
+import qualified Data.Text as Text
+import qualified Data.Map as Map
 
 
+type Addr = Int
+
+data Instruction 
+   = Take !Int
+   | Enter !AMode
+   | Push !AMode
+
+
+data AMode
+   = Arg !Int
+   | Label !Text.Text
+   | Code ![Instruction]
+   | IntConst !Int
+
+
+data FramePtr 
+   = FrameAddr Addr
+   | FrameInt Int
+   | FrameNull
+
+
+type Closure = ([Instruction], FramePtr)
+type TimHeap = Heap.Heap Addr Closure 
+type TimStack = [Closure] 
+type CodeStore = Map.Map Text.Text [Instruction]
 
 data TimState = TimState
    {
       instructions :: [Instruction],
-      framePtr :: Address,
-      stack :: [Closure],
-      heap :: Heap.Heap Address Frame,
+      framePtr :: FramePtr,
+      stack :: TimStack,
+      heap :: TimHeap,
       codeStore :: CodeStore
    }
    

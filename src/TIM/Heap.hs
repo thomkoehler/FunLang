@@ -13,7 +13,7 @@ where
 import qualified Data.Map.Strict as Map
 
 
-data (Num a, Ord a) => Heap a d = Heap (Map.Map a d) a
+data Heap a d = Heap (Map.Map a d) a
 
 empty :: (Num a, Ord a) => Heap a d
 empty = Heap Map.empty 1
