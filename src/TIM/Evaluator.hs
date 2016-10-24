@@ -1,5 +1,5 @@
 
-module TIM.Machine where
+module TIM.Evaluator where
 
 import qualified TIM.Heap as Heap
 import qualified Data.Text as Text
@@ -44,7 +44,15 @@ data TimState = TimState
       codeStore :: CodeStore
    }
    
+
+lookupCodeStore :: Text.Text -> CodeStore -> [Instruction]
+lookupCodeStore name cs = fromMaybe (error (printf "%s not found." name)) $ Map.lookup name cs
    
+
+--TODO intCode
+intCode :: Int -> [Instruction]
+intCode _ = []
+
 takeN :: Int -> TimState -> TimState
 takeN n state = state
    {
@@ -67,8 +75,16 @@ pushArg am state@(TimState _ fp st h cs) = state
 
 amodeToClosure :: AMode -> FramePtr -> TimHeap -> CodeStore -> Closure
 amodeToClosure (Arg k) fp hp _ = getClosureFromHeap k fp hp
+amodeToClosure (Code is) fp _ _ = (is, fp)
+amodeToClosure (Label name) fp _ cs = (lookupCodeStore name cs, fp)
+amodeToClosure (IntConst iConst) fp _ _ = (intCode iConst, fp)
 
 
 getClosureFromHeap :: Int -> FramePtr -> TimHeap -> Closure
 getClosureFromHeap k (FrameAddr addr) hp = (fromMaybe (error (printf "Read from wrong address: %d" addr)) (Heap.get addr hp)) !! k
+getClosureFromHeap _ (FrameInt _) _ = undefined
 getClosureFromHeap _ FrameNull _ = error "Read from NULL address."
+
+
+eval :: CodeStore -> [TimState]
+eval = undefined

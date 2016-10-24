@@ -35,7 +35,7 @@ library
         Compiler.Lexer,
         Compiler.Types,
         Compiler.Parser,
-        TIM.Machine,
+        TIM.Evaluator,
         TIM.Heap
 
 executable FunLang-exe
