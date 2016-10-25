@@ -1,52 +1,17 @@
 
 module TIM.Evaluator where
 
+
+import TIM.Types
 import qualified TIM.Heap as Heap
-import qualified Data.Text as Text
-import qualified Data.Map as Map
 
 import Data.Maybe
 import Text.Printf
+import qualified Data.Map as Map
+  
 
-type Addr = Int
-
-data Instruction 
-   = Take !Int
-   | Enter !AMode
-   | Push !AMode
-
-
-data AMode
-   = Arg !Int
-   | Label !Text.Text
-   | Code ![Instruction]
-   | IntConst !Int
-
-
-data FramePtr 
-   = FrameAddr Addr
-   | FrameInt Int
-   | FrameNull
-
-
-type Frame = [Closure]
-type Closure = ([Instruction], FramePtr)
-type TimHeap = Heap.Heap Addr Frame
-type TimStack = [Closure] 
-type CodeStore = Map.Map Text.Text [Instruction]
-
-data TimState = TimState
-   {
-      instructions :: [Instruction],
-      framePtr :: FramePtr,
-      stack :: TimStack,
-      heap :: TimHeap,
-      codeStore :: CodeStore
-   }
-   
-
-lookupCodeStore :: Text.Text -> CodeStore -> [Instruction]
-lookupCodeStore name cs = fromMaybe (error (printf "%s not found." name)) $ Map.lookup name cs
+lookupCodeStore :: Name -> CodeStore -> [Instruction]
+lookupCodeStore name cs = fromMaybe (error (printf "Not in scope: '%s'" name)) $ Map.lookup name cs
    
 
 --TODO intCode
@@ -74,16 +39,16 @@ pushArg am state@(TimState _ fp st h cs) = state
 
 
 amodeToClosure :: AMode -> FramePtr -> TimHeap -> CodeStore -> Closure
-amodeToClosure (Arg k) fp hp _ = getClosureFromHeap k fp hp
+amodeToClosure (Arg k) fp hp _ = createClosure k fp hp
 amodeToClosure (Code is) fp _ _ = (is, fp)
 amodeToClosure (Label name) fp _ cs = (lookupCodeStore name cs, fp)
 amodeToClosure (IntConst iConst) fp _ _ = (intCode iConst, fp)
 
 
-getClosureFromHeap :: Int -> FramePtr -> TimHeap -> Closure
-getClosureFromHeap k (FrameAddr addr) hp = (fromMaybe (error (printf "Read from wrong address: %d" addr)) (Heap.get addr hp)) !! k
-getClosureFromHeap _ (FrameInt _) _ = undefined
-getClosureFromHeap _ FrameNull _ = error "Read from NULL address."
+createClosure :: Int -> FramePtr -> TimHeap -> Closure
+createClosure k (FrameAddr addr) hp = (fromMaybe (error (printf "Read from wrong address: %d" addr)) (Heap.get addr hp)) !! k
+createClosure _ (FrameInt _) _ = undefined
+createClosure _ FrameNull _ = error "Read from NULL address."
 
 
 eval :: CodeStore -> [TimState]

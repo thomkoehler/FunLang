@@ -36,7 +36,9 @@ library
         Compiler.Types,
         Compiler.Parser,
         TIM.Evaluator,
-        TIM.Heap
+        TIM.Heap,
+        TIM.Compiler,
+        TIM.Types
 
 executable FunLang-exe
     main-is: Main.hs

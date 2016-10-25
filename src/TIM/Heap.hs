@@ -14,7 +14,8 @@ where
 import qualified Data.Map.Strict as Map
 
 
-data Heap a d = Heap (Map.Map a d) a
+data Heap a d = Heap !(Map.Map a d) !a 
+   deriving(Show)
 
 empty :: (Num a) => Heap a d
 empty = Heap Map.empty 1
