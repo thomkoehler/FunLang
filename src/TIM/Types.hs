@@ -19,7 +19,7 @@ data AMode
    = Arg {-# UNPACK #-} !Int
    | Label {-# UNPACK #-} !Name
    | Code ![Instruction]
-   | IntConst {-# UNPACK #-} !Int
+   | IntConst {-# UNPACK #-} !Integer
    deriving(Show)
 
 
@@ -38,10 +38,10 @@ type CodeStore = Map.Map Name [Instruction]
 
 data TimState = TimState
    {
-      instructions :: [Instruction],
-      framePtr :: FramePtr,
-      stack :: TimStack,
-      heap :: TimHeap,
-      codeStore :: CodeStore
+      instructions :: ![Instruction],
+      framePtr :: !FramePtr,
+      stack :: !TimStack,
+      heap :: !TimHeap,
+      codeStore :: !CodeStore
    }
    deriving(Show)

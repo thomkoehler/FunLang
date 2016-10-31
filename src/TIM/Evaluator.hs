@@ -15,7 +15,7 @@ lookupCodeStore name cs = fromMaybe (error (printf "Not in scope: '%s'" name)) $
    
 
 --TODO intCode
-intCode :: Int -> [Instruction]
+intCode :: Integer -> [Instruction]
 intCode _ = []
 
 takeN :: Int -> TimState -> TimState
