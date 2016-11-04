@@ -51,5 +51,45 @@ createClosure _ (FrameInt _) _ = undefined
 createClosure _ FrameNull _ = error "Read from NULL address."
 
 
-eval :: CodeStore -> [TimState]
-eval = undefined
+eval :: TimState -> [TimState]
+eval state = state : restState
+   where
+      restState | timFinal state = []
+                | otherwise = eval nextState
+
+      nextState = step state
+
+
+timFinal :: TimState -> Bool
+timFinal (TimState [] _ _ _ _) = True
+timFinal _ = False
+
+
+step :: TimState -> TimState
+step state@(TimState (Take n : instr) _ st hp _)
+   | length st >= n = state 
+      {  
+         instructions = instr,
+         framePtr = FrameAddr addr,
+         stack = drop n st,
+         heap = hp'
+      }
+      where
+         (hp', addr) = Heap.insert (take n st) hp
+
+
+step state@(TimState [Enter am] fptr st hp cs) = state
+   {
+      instructions = instr,
+      framePtr = FrameAddr addr
+   }
+   where
+      (instr, addr) = amodeToClosure am fptr hp cs
+
+
+step state@(TimState (Push am : instr) fptr st hp cs) = state 
+   { 
+      instructions = instr,
+      stack = amodeToClosure am fptr hp cs : st
+   }
+
