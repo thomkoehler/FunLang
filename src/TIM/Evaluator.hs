@@ -8,11 +8,11 @@ import qualified TIM.Heap as Heap
 import Data.Maybe
 import Text.Printf
 import qualified Data.Map as Map
-  
+
 
 lookupCodeStore :: Name -> CodeStore -> [Instruction]
 lookupCodeStore name cs = fromMaybe (error (printf "Not in scope: '%s'" name)) $ Map.lookup name cs
-   
+
 
 --TODO intCode
 intCode :: Integer -> [Instruction]
@@ -29,7 +29,7 @@ takeN n state = state
    where
       closures = take n (stack state)
       (newHeap, closuresAddr) = Heap.insert closures $ heap state
-       
+
 
 pushArg :: AMode -> TimState -> TimState
 pushArg am state@(TimState _ fp st h cs) = state
@@ -67,8 +67,8 @@ timFinal _ = False
 
 step :: TimState -> TimState
 step state@(TimState (Take n : instr) _ st hp _)
-   | length st >= n = state 
-      {  
+   | length st >= n = state
+      {
          instructions = instr,
          framePtr = FrameAddr addr,
          stack = drop n st,
@@ -87,9 +87,8 @@ step state@(TimState [Enter am] fptr st hp cs) = state
       (instr, addr) = amodeToClosure am fptr hp cs
 
 
-step state@(TimState (Push am : instr) fptr st hp cs) = state 
-   { 
+step state@(TimState (Push am : instr) fptr st hp cs) = state
+   {
       instructions = instr,
       stack = amodeToClosure am fptr hp cs : st
    }
-
