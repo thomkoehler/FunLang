@@ -18,7 +18,12 @@ lookupCodeStore name cs = fromMaybe (error (printf "Not in scope: '%s'" name)) $
 intCode :: Integer -> [Instruction]
 intCode _ = []
 
-takeN :: Int -> TimState -> TimState
+
+-- | take n closures from stack and create a new frame
+takeN :: Int      -- ^ size of closures
+   -> TimState    -- ^ state before
+   -> TimState    -- ^ state after
+
 takeN n state = state
    {
       instructions = tail $ instructions state,
@@ -31,22 +36,38 @@ takeN n state = state
       (newHeap, closuresAddr) = Heap.insert closures $ heap state
 
 
-pushArg :: AMode -> TimState -> TimState
+-- | create closure from argument and push it onto stack
+pushArg :: AMode  -- ^ argument
+   -> TimState    -- ^ state before
+   -> TimState    -- ^ state after
+
 pushArg am state@(TimState _ fp st h cs) = state
    {
-      stack = (amodeToClosure am fp h cs) : st
+      stack = amodeToClosure am fp h cs : st
    }
 
 
-amodeToClosure :: AMode -> FramePtr -> TimHeap -> CodeStore -> Closure
+-- | create closure from argument
+amodeToClosure :: AMode    -- ^ argument
+   -> FramePtr             -- ^ current frame
+   -> TimHeap              -- ^ heap
+   -> CodeStore            -- ^ code store
+   -> Closure              -- ^ new closure
+
 amodeToClosure (Arg k) fp hp _ = createClosure k fp hp
 amodeToClosure (Code is) fp _ _ = (is, fp)
 amodeToClosure (Label name) fp _ cs = (lookupCodeStore name cs, fp)
 amodeToClosure (IntConst iConst) fp _ _ = (intCode iConst, fp)
 
 
-createClosure :: Int -> FramePtr -> TimHeap -> Closure
-createClosure k (FrameAddr addr) hp = (fromMaybe (error (printf "Read from wrong address: %d" addr)) (Heap.get addr hp)) !! k
+-- |  get closure at position from frame
+createClosure :: Int -- ^ position
+   -> FramePtr       -- ^ frame
+   -> TimHeap        -- ^ heap
+   -> Closure        -- ^ closure
+createClosure n (FrameAddr addr) hp
+   = fromMaybe (error (printf "Read from wrong address: %d" addr)) (Heap.get addr hp) !! n
+
 createClosure _ (FrameInt _) _ = undefined
 createClosure _ FrameNull _ = error "Read from NULL address."
 
@@ -65,7 +86,10 @@ timFinal (TimState [] _ _ _ _) = True
 timFinal _ = False
 
 
-step :: TimState -> TimState
+-- | take next step and call it
+step :: TimState  -- ^ state before
+   -> TimState    -- ^state after
+
 step state@(TimState (Take n : instr) _ st hp _)
    | length st >= n = state
       {
