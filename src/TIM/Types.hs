@@ -9,7 +9,7 @@ import qualified TIM.Heap as Heap
 import qualified Data.Text as T
 import qualified Data.Map as Map
 
-import Utils.PrettyPrint
+import Utils.PrettyPrint()
 
 type Addr = Int
 type Name = T.Text
@@ -65,6 +65,5 @@ instance Out TimState where
          docSt = text ", stack: " <> doc st
          docHp = text ", heap: " <> doc hp
          docCs = text ", code store: " <> doc cs
-
 
    docPrec _ = doc

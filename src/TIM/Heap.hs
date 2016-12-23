@@ -15,14 +15,14 @@ where
 
 import qualified Data.Map.Strict as Map
 import Text.PrettyPrint.GenericPretty
-import Text.PrettyPrint hiding(empty)
+import Utils.PrettyPrint()
 
 
 data Heap a d = Heap !(Map.Map a d) !a
    deriving(Show)
 
-instance (Out n, Out i) => Out (Map.Map n i) where
-   doc = braces . docList . Map.toList
+instance (Out a, Out d) => Out (Heap a d) where
+   doc (Heap m _) = doc m
    docPrec _ = doc
 
 
