@@ -18,9 +18,9 @@ data ScDefn = ScDefn
    deriving(Show, Eq)
 
 
-data Expr 
+data Expr
    = EVar !Text
-   | ENum !Integer
+   | ENum !Int
    | ELet [(Text, Expr)] Expr
    | EAp Expr Expr
    deriving(Show, Eq)

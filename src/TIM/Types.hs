@@ -8,7 +8,7 @@ import qualified Data.Map as Map
 type Addr = Int
 type Name = T.Text
 
-data Instruction 
+data Instruction
    = Take {-# UNPACK #-} !Int
    | Enter !AMode
    | Push !AMode
@@ -19,11 +19,11 @@ data AMode
    = Arg {-# UNPACK #-} !Int
    | Label {-# UNPACK #-} !Name
    | Code ![Instruction]
-   | IntConst {-# UNPACK #-} !Integer
+   | IntConst {-# UNPACK #-} !Int
    deriving(Show)
 
 
-data FramePtr 
+data FramePtr
    = FrameAddr {-# UNPACK #-} !Addr
    | FrameInt {-# UNPACK #-} !Int
    | FrameNull
@@ -33,7 +33,7 @@ data FramePtr
 type Frame = [Closure]
 type Closure = ([Instruction], FramePtr)
 type TimHeap = Heap.Heap Addr Frame
-type TimStack = [Closure] 
+type TimStack = [Closure]
 type CodeStore = Map.Map Name [Instruction]
 
 data TimState = TimState

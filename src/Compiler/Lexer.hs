@@ -6,14 +6,13 @@ module Compiler.Lexer
    Compiler.Lexer.identifier,
    Compiler.Lexer.natural,
    Compiler.Lexer.reserved,
-   Compiler.Lexer.reservedOp
+   Compiler.Lexer.reservedOp,
+   Compiler.Lexer.parens
 )
 where
 
 import Text.Parsec hiding (State)
-import Text.Parsec.Indent
 import Control.Monad.State
-import Control.Monad
 import Text.Parsec.Token
 import Data.Text
 import qualified Text.Parsec.Token as P
@@ -52,8 +51,8 @@ lexer = P.makeTokenParser languageDef
 identifier :: IParser Text
 identifier = pack <$> P.identifier lexer
 
-natural :: IParser Integer
-natural = P.natural lexer
+natural :: IParser Int
+natural = fromEnum <$> P.natural lexer
 
 parens :: IParser a -> IParser a
 parens = P.parens lexer

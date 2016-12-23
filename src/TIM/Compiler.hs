@@ -19,7 +19,7 @@ compileProgram env prog = Map.fromList $ map (compileScDefn env) prog
 
 
 compileScDefn :: TimCompilerEnv -> ScDefn -> (Name, [Instruction])
-compileScDefn env (ScDefn name args body) = (name, (Take (length args)) : instrs)
+compileScDefn env (ScDefn name args body) = (name, Take (length args) : instrs)
    where
       newEnv = Map.union env $ Map.fromList $ zip args $ map Arg [1..]
       instrs = compileToInstructions body newEnv

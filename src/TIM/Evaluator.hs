@@ -15,7 +15,7 @@ lookupCodeStore name cs = fromMaybe (error (printf "Not in scope: '%s'" name)) $
 
 
 --TODO intCode
-intCode :: Integer -> [Instruction]
+intCode :: Int -> [Instruction]
 intCode _ = []
 
 
@@ -54,10 +54,17 @@ amodeToClosure :: AMode    -- ^ argument
    -> CodeStore            -- ^ code store
    -> Closure              -- ^ new closure
 
-amodeToClosure (Arg k) fp hp _ = createClosure k fp hp
-amodeToClosure (Code is) fp _ _ = (is, fp)
-amodeToClosure (Label name) fp _ cs = (lookupCodeStore name cs, fp)
-amodeToClosure (IntConst iConst) fp _ _ = (intCode iConst, fp)
+amodeToClosure (Label l) fp _ cs = (lookupCodeStore l cs, fp)
+
+amodeToClosure (Arg k) (FrameAddr addr) hp _ =
+   let
+      frame = fromMaybe (error (printf "Heap read error address %d" addr)) $ Heap.get addr hp
+   in
+      frame !! k
+
+amodeToClosure (Code instrs) fp _ _ = (instrs, fp)
+
+amodeToClosure (IntConst n) _ _ _ = (intCode n, FrameInt n)
 
 
 -- |  get closure at position from frame
@@ -86,7 +93,7 @@ timFinal (TimState [] _ _ _ _) = True
 timFinal _ = False
 
 
--- | take next step and call it
+-- | take the next step and call it
 step :: TimState  -- ^ state before
    -> TimState    -- ^state after
 
@@ -102,13 +109,13 @@ step state@(TimState (Take n : instr) _ st hp _)
          (hp', addr) = Heap.insert (take n st) hp
 
 
-step state@(TimState [Enter am] fptr st hp cs) = state
+step state@(TimState [Enter am] fptr _ hp cs) = state
    {
-      instructions = instr,
-      framePtr = FrameAddr addr
+      instructions = instructions',
+      framePtr = framePtr'
    }
    where
-      (instr, addr) = amodeToClosure am fptr hp cs
+      (instructions', framePtr') = amodeToClosure am fptr hp cs
 
 
 step state@(TimState (Push am : instr) fptr st hp cs) = state
