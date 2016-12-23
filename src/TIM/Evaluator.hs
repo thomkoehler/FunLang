@@ -1,5 +1,7 @@
 
-module TIM.Evaluator where
+{-# LANGUAGE OverloadedStrings #-}
+
+module TIM.Evaluator(compile, eval) where
 
 
 import TIM.Types
@@ -9,6 +11,20 @@ import Data.Maybe
 import Text.Printf
 import qualified Data.Map as Map
 
+
+compile :: CodeStore -> TimState
+compile program = TimState
+   {
+      instructions = [Enter (Label "main")],
+      framePtr = FrameNull,
+      stack = [],
+      heap = Heap.empty,
+      codeStore = Map.union preludeDefs program
+   }
+
+
+preludeDefs :: CodeStore
+preludeDefs = Map.empty
 
 lookupCodeStore :: Name -> CodeStore -> [Instruction]
 lookupCodeStore name cs = fromMaybe (error (printf "Not in scope: '%s'" name)) $ Map.lookup name cs
