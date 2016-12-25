@@ -3,8 +3,8 @@
 module Compiler
 (
    module Compiler.Parser
-
-) where
+) 
+where
 
 import Compiler.Parser(parse)
 
