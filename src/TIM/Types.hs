@@ -61,9 +61,9 @@ instance Out TimState where
    doc (TimState is fp st hp cs) = braces $ docIs <> docFp <> docSt <> docHp <> docCs
       where
          docIs = text "instructions: " <> doc is
-         docFp = text ", frame: " <> doc fp
-         docSt = text ", stack: " <> doc st
-         docHp = text ", heap: " <> doc hp
-         docCs = text ", code store: " <> doc cs
+         docFp = text ",frame: " <> doc fp
+         docSt = text ",stack: " <> doc st
+         docHp = text ",heap: " <> doc hp
+         docCs = text ",code store: " <> doc cs
 
    docPrec _ = doc

@@ -1,5 +1,5 @@
 
-module TIM.Compiler where
+module TIM.Compiler(compileProgram) where
 
 import Language
 
@@ -14,8 +14,8 @@ import TIM.Types
 type TimCompilerEnv = Map.Map Text.Text AMode
 
 
-compileProgram :: TimCompilerEnv -> Program -> CodeStore
-compileProgram env prog = Map.fromList $ map (compileScDefn env) prog
+compileProgram :: Program -> CodeStore
+compileProgram prog = Map.fromList $ map (compileScDefn Map.empty) prog
 
 
 compileScDefn :: TimCompilerEnv -> ScDefn -> (Name, [Instruction])
