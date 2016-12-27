@@ -105,7 +105,7 @@ Def
    : id '=' Expr ';' { ($1, $3) }
 
 
-{--
+{-- TODO
 
 Alts :: { [CoreAlter] }
    : Alt      { [$1] }

@@ -1,11 +1,13 @@
 
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE  QuasiQuotes #-}
 
 module TIM.Evaluator(compile, eval) where
 
 
 import TIM.Types
 import qualified TIM.Heap as Heap
+import TIM.FunQuoter
 
 import Data.Maybe
 import Text.Printf
@@ -25,7 +27,13 @@ compile program = TimState
 
 
 preludeDefs :: CodeStore
-preludeDefs = Map.empty
+preludeDefs = [fun|
+   I x = x ;
+   K x y = x ;
+   K1 x y = y ;
+   S f g x = f (g x) ;
+|]
+
 
 lookupCodeStore :: Name -> CodeStore -> [Instruction]
 lookupCodeStore name cs = fromMaybe (error (printf "Not in scope: '%s'" (C.unpack name))) $ Map.lookup name cs

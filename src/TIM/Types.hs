@@ -1,8 +1,10 @@
 
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveDataTypeable #-}
 
 module TIM.Types where
 
+import Data.Data
 import Text.PrettyPrint.GenericPretty
 import Text.PrettyPrint
 import qualified TIM.Heap as Heap
@@ -18,7 +20,7 @@ data Instruction
    = Take {-# UNPACK #-} !Int
    | Enter !AMode
    | Push !AMode
-   deriving(Show, Generic)
+   deriving(Show, Generic, Data)
 
 instance Out Instruction
 
@@ -27,7 +29,7 @@ data AMode
    | Label {-# UNPACK #-} !Name
    | Code ![Instruction]
    | IntConst {-# UNPACK #-} !Int
-   deriving(Show, Generic)
+   deriving(Show, Generic, Data)
 
 instance Out AMode
 
