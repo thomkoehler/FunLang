@@ -4,14 +4,15 @@
 
 module Utils.PrettyPrint where
 
-import qualified Data.Text
+import qualified Data.ByteString.Lazy as ByteString
+import qualified Data.ByteString.Lazy.Char8 as C
 import qualified Data.Map.Strict
 import Text.PrettyPrint.GenericPretty
 import Text.PrettyPrint
 
 
-instance Out Data.Text.Text where
-   doc = text . Data.Text.unpack
+instance Out ByteString.ByteString where
+   doc = text . C.unpack
    docPrec _ = doc
 
 

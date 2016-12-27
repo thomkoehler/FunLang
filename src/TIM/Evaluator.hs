@@ -9,6 +9,7 @@ import qualified TIM.Heap as Heap
 
 import Data.Maybe
 import Text.Printf
+import qualified Data.ByteString.Lazy.Char8 as C
 import qualified Data.Map as Map
 
 
@@ -27,7 +28,7 @@ preludeDefs :: CodeStore
 preludeDefs = Map.empty
 
 lookupCodeStore :: Name -> CodeStore -> [Instruction]
-lookupCodeStore name cs = fromMaybe (error (printf "Not in scope: '%s'" name)) $ Map.lookup name cs
+lookupCodeStore name cs = fromMaybe (error (printf "Not in scope: '%s'" (C.unpack name))) $ Map.lookup name cs
 
 
 --TODO intCode

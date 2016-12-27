@@ -6,13 +6,13 @@ module TIM.Types where
 import Text.PrettyPrint.GenericPretty
 import Text.PrettyPrint
 import qualified TIM.Heap as Heap
-import qualified Data.Text as T
 import qualified Data.Map as Map
+import Data.ByteString.Lazy(ByteString)
 
 import Utils.PrettyPrint()
 
 type Addr = Int
-type Name = T.Text
+type Name = ByteString
 
 data Instruction
    = Take {-# UNPACK #-} !Int

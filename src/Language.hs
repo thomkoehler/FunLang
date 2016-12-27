@@ -3,7 +3,7 @@
 
 module Language where
 
-import Data.Text
+import Data.ByteString.Lazy(ByteString)
 
 
 type Program = [ScDefn]
@@ -11,17 +11,17 @@ type Program = [ScDefn]
 
 data ScDefn = ScDefn
    {
-      scName :: !Text,
-      scArgs :: ![Text],
+      scName :: !ByteString,
+      scArgs :: ![ByteString],
       scExpr :: !Expr
    }
    deriving(Show, Eq)
 
 
 data Expr
-   = EVar !Text
+   = EVar !ByteString
    | ENum !Int
-   | ELet [(Text, Expr)] Expr
+   | ELet [(ByteString, Expr)] Expr
    | EAp Expr Expr
    deriving(Show, Eq)
 

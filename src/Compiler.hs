@@ -2,10 +2,10 @@
 
 module Compiler
 (
-   module Compiler.Parser
-) 
+   module Compiler.Grammar
+)
 where
 
-import Compiler.Parser(parse)
+import Compiler.Grammar(parse)
 
 ---------------------------------------------------------------------------------------------------
