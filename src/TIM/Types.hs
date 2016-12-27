@@ -58,12 +58,14 @@ data TimState = TimState
    deriving(Show, Generic)
 
 instance Out TimState where
-   doc (TimState is fp st hp cs) = braces $ docIs <> docFp <> docSt <> docHp <> docCs
-      where
-         docIs = text "instructions: " <> doc is
-         docFp = text ",frame: " <> doc fp
-         docSt = text ",stack: " <> doc st
-         docHp = text ",heap: " <> doc hp
-         docCs = text ",code store: " <> doc cs
+   doc (TimState is fp st hp cs) = vcat
+      [
+         text "TimState:",
+         nest 1 (text "instructions: " <> doc is),
+         nest 1 (text "frame: " <> doc fp),
+         nest 1 (text "stack: " <> doc st),
+         nest 1 (text "heap: " <> doc hp),
+         nest 1 (text "code store: " <> doc cs)
+      ]
 
    docPrec _ = doc

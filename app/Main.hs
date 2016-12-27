@@ -20,6 +20,6 @@ main = do
    let content = "main = 1"
    case parse file content of
       Left err -> print err
-      Right prg -> print $ render . doc . eval . compile . compileProgram $ prg
+      Right prg -> putStrLn $ render . doc . eval . compile . compileProgram $ prg
 
 ---------------------------------------------------------------------------------------------------
