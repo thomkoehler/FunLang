@@ -36,6 +36,7 @@ library
     hs-source-dirs: src
     other-modules:
         Compiler.Lexer,
+        Compiler.Lexer2,
         Compiler.Types,
         Compiler.Parser,
         TIM.Evaluator,
@@ -43,6 +44,8 @@ library
         TIM.Compiler,
         TIM.Types,
         Utils.PrettyPrint
+
+   build-tools: alex, happy
 
 executable FunLang
     main-is: Main.hs
