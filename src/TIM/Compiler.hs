@@ -12,7 +12,7 @@ import Text.Printf
 import TIM.Types
 
 
-type TimCompilerEnv = Map.Map ByteString AMode
+type TimCompilerEnv = Map.Map Name AMode
 
 
 compileProgram :: Program -> CodeStore
@@ -34,6 +34,6 @@ compileToInstructions _ _ = error "compileToInstructions: can't do this yet"
 
 
 compileToAMode :: Expr -> TimCompilerEnv -> AMode
-compileToAMode (EVar v) env = fromMaybe (error (printf "Not in scope: '%s'" (C.unpack v))) $ Map.lookup v env
+compileToAMode (EVar v) env = fromMaybe (Label v) $ Map.lookup v env
 compileToAMode (ENum n) _ = IntConst n
 compileToAMode e env = Code $ compileToInstructions e env

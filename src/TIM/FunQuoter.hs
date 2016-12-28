@@ -19,4 +19,4 @@ fun = QuasiQuoter
 
 
 quoteExpFunTerm :: String -> TH.Q TH.Exp
-quoteExpFunTerm str = dataToExpQ (const Nothing) $ compileProgram . parse . C.pack $ str
+quoteExpFunTerm = dataToExpQ (const Nothing) . compileProgram . parse . C.pack

@@ -27,16 +27,20 @@ compile program = TimState
 
 
 preludeDefs :: CodeStore
+preludeDefs = Map.empty
+
+{- TODO
 preludeDefs = [fun|
    I x = x ;
    K x y = x ;
    K1 x y = y ;
    S f g x = f (g x) ;
 |]
+-}
 
 
 lookupCodeStore :: Name -> CodeStore -> [Instruction]
-lookupCodeStore name cs = fromMaybe (error (printf "Not in scope: '%s'" (C.unpack name))) $ Map.lookup name cs
+lookupCodeStore name cs = fromMaybe (error (printf "cs: Not in scope: '%s'" (C.unpack name))) $ Map.lookup name cs
 
 
 --TODO intCode
@@ -148,3 +152,6 @@ step state@(TimState (Push am : instr) fptr st hp cs) = state
       instructions = instr,
       stack = amodeToClosure am fptr hp cs : st
    }
+
+
+step (TimState is _ _ _ _) = error $ "Instruction not supported: " ++ show is
