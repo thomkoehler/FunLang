@@ -89,7 +89,7 @@ amodeToClosure (Arg k) (FrameAddr addr) hp _ =
    let
       frame = fromMaybe (error (printf "Heap read error address %d" addr)) $ Heap.get addr hp
    in
-      frame !! k
+      frame !! (k -1)
 
 amodeToClosure (Code instrs) fp _ _ = (instrs, fp)
 
@@ -134,8 +134,10 @@ step state@(TimState (Take n : instr) _ st hp _)
          stack = drop n st,
          heap = hp'
       }
-      where
-         (hp', addr) = Heap.insert (take n st) hp
+   | otherwise = error "Stack overflow."
+   where
+      (hp', addr) = Heap.insert (take n st) hp
+
 
 
 step state@(TimState [Enter am] fptr _ hp cs) = state

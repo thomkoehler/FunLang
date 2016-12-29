@@ -16,6 +16,8 @@ import TIM
 main :: IO ()
 main = do
    content <- ByteString.readFile "testSrc/prelude.fl"
-   putStrLn $ render . doc . eval . compile . compileProgram . parse $ content
+   let ast = parse content
+   putStrLn $ render . doc $ ast
+   putStrLn $ render . doc . eval . compile . compileProgram $ ast
 
 ---------------------------------------------------------------------------------------------------
