@@ -12,6 +12,7 @@ import TIM.FunQuoter
 import Data.Maybe
 import Text.Printf
 import qualified Data.ByteString.Lazy.Char8 as C
+import qualified Data.ByteString.Lazy as ByteString
 import qualified Data.Map as Map
 
 
@@ -21,13 +22,18 @@ compile program = TimState
       instructions = [Enter (Label "main")],
       framePtr = FrameNull,
       stack = [],
+      valueStack = [],
       heap = Heap.empty,
       codeStore = Map.union preludeDefs program
    }
 
 
 preludeDefs :: CodeStore
-preludeDefs = Map.empty
+preludeDefs = Map.fromList
+   [
+      ("+", compilePrimitives "+"),
+      ("*", compilePrimitives "*")
+   ]
 
 {- TODO
 preludeDefs = [fun|
@@ -38,6 +44,23 @@ preludeDefs = [fun|
 |]
 -}
 
+compilePrimitives :: ByteString.ByteString -> [Instruction]
+compilePrimitives op =
+   [
+      Take 2,
+      Push
+      (
+         Code
+         [
+            Push (Code [Op (strToOp op), Return]),
+            Enter (Arg 1)
+         ]
+      )
+   ]
+   where
+      strToOp "*" = Mult
+      strToOp "+" = Add
+
 
 lookupCodeStore :: Name -> CodeStore -> [Instruction]
 lookupCodeStore name cs = fromMaybe (error (printf "cs: Not in scope: '%s'" (C.unpack name))) $ Map.lookup name cs
@@ -45,7 +68,7 @@ lookupCodeStore name cs = fromMaybe (error (printf "cs: Not in scope: '%s'" (C.u
 
 --TODO intCode
 intCode :: Int -> [Instruction]
-intCode _ = []
+intCode _ = [PushV FramePtr, Return]
 
 
 -- | take n closures from stack and create a new frame
@@ -70,7 +93,7 @@ pushArg :: AMode  -- ^ argument
    -> TimState    -- ^ state before
    -> TimState    -- ^ state after
 
-pushArg am state@(TimState _ fp st h cs) = state
+pushArg am state@(TimState _ fp st vst h cs) = state
    {
       stack = amodeToClosure am fp h cs : st
    }
@@ -118,7 +141,7 @@ eval state = state : restState
 
 
 timFinal :: TimState -> Bool
-timFinal (TimState [] _ _ _ _) = True
+timFinal (TimState [] _ _ _ _ _) = True
 timFinal _ = False
 
 
@@ -126,7 +149,7 @@ timFinal _ = False
 step :: TimState  -- ^ state before
    -> TimState    -- ^state after
 
-step state@(TimState (Take n : instr) _ st hp _)
+step state@(TimState (Take n : instr) _ st _ hp _)
    | length st >= n = state
       {
          instructions = instr,
@@ -140,7 +163,7 @@ step state@(TimState (Take n : instr) _ st hp _)
 
 
 
-step state@(TimState [Enter am] fptr _ hp cs) = state
+step state@(TimState [Enter am] fptr _ _ hp cs) = state
    {
       instructions = instructions',
       framePtr = framePtr'
@@ -149,11 +172,24 @@ step state@(TimState [Enter am] fptr _ hp cs) = state
       (instructions', framePtr') = amodeToClosure am fptr hp cs
 
 
-step state@(TimState (Push am : instr) fptr st hp cs) = state
+step state@(TimState (Push am : instr) fptr st _ hp cs) = state
    {
       instructions = instr,
       stack = amodeToClosure am fptr hp cs : st
    }
 
 
-step (TimState is _ _ _ _) = error $ "Instruction not supported: " ++ show is
+step state@(TimState [Return] _ ((instr', framePtr'):st') _ _ _) = state
+   {
+      instructions = instr',
+      stack = st',
+      framePtr = framePtr'
+   }
+
+step state@(TimState (PushV FramePtr : instr) (FrameInt n) _ vst _ _) = state
+   {
+      instructions = instr,
+      valueStack = n : vst
+   }
+
+step (TimState is _ _ _ _ _) = error $ "TimState not supported: " ++ show is

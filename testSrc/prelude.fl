@@ -4,4 +4,4 @@ K x y = x ;
 K1 x y = y ;
 S f g x = f (g x) ;
 
-main = S K K 4 ;
+main = 1 + 2 ;
